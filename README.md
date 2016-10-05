@@ -57,7 +57,7 @@ This code has a compllicated history; all I have done is to refactor the code so
 
 - The original code by Petzold and Marsh was written in Fortran, then converted to C. It is available from [here](http://www.ccl.net/cca/software/SOURCES/C/kinetics2/index.shtml), and the code is mirrored in the `orig/lsoda-orig` subdirectory.
 - Heng Li [@lh3](http://github.com/lh3) refactored the code, which is available [here](http://github.com/lh3/misc). The code is mirrored in the `orig/lsoda-lh3` subdirectory.
-- Yu Feng [@rainwoodman](http://github.com/rainwoodman) refactor Heng Li's code to make it reentrant. The code is available [here](https://github.com/rainwoodman/psphray), and is mirrored in the `orig/lsoda-rainwoodman` subdirectory.
+- Yu Feng [@rainwoodman](http://github.com/rainwoodman) refactored Heng Li's code to make it reentrant. The code is available [here](https://github.com/rainwoodman/psphray), and is mirrored in the `orig/lsoda-rainwoodman` subdirectory.
 
 ## References
 
