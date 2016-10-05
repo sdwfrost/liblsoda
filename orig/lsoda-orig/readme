@@ -1,0 +1,23 @@
+
+These files constitute a stiff ode solver (with sample use) in fortran.
+You must edit d1mach.f for your machine. It is currently figured for a
+SUN-3.
+
+README		this file
+address		address of source for lsode.c
+answer		results from example test problem
+cmds		some picsure plotting commands
+daxpy.c
+ddot.c
+dgefa.c
+dgesl.c
+dscal.c
+example.c	sample usage
+idamax.c
+lsoda.c		the main ode solver
+lsoda.doc	some docs from the original fortran distribution
+makefile	a makefile for the example, NOTE level 4 optimization does not
+		work with lsoda.c
+
+make libq.a wil make a library containing these routines.
+
