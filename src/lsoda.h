@@ -1,3 +1,6 @@
+#ifndef _LSODA_H_
+#define _LSODA_H_
+
 /* ************************************
  * 
  */
@@ -37,3 +40,4 @@ void lsoda_reset(struct lsoda_context_t * ctx);
 int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout);
 void lsoda_free(struct lsoda_context_t * ctx);
 
+#endif
