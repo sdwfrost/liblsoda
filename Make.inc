@@ -48,6 +48,10 @@ ifeq ($(OS), WINNT)
 SHLIB_EXT = dll
 endif
 
+ifeq ($(OS), MINGW64_NT-10.0)
+SHLIB_EXT = dll
+endif
+
 # SunOS with gcc
 ifeq ($(OS), SunOS)
 SHLIB_EXT = so
