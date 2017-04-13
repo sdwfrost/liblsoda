@@ -878,3 +878,23 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 		}			/* end while   */
 
 	}				/* end lsoda   */
+
+///////////////////////////////////
+struct lsoda_context_t * lsoda_create_ctx()
+{
+	struct lsoda_context_t * mem = malloc(sizeof(struct lsoda_context_t));
+	return mem;
+}
+
+struct lsoda_opt_t * lsoda_create_opt()
+{
+	struct lsoda_opt_t * mem = malloc(sizeof(struct lsoda_opt_t));
+	return mem;
+}
+
+void lsoda_free_opt(struct lsoda_opt_t * opt)
+{
+	free(opt->atol);
+	free(opt->rtol);
+	free(opt);
+}
