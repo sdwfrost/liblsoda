@@ -35,4 +35,7 @@
 # cmake
 build/
 build_debug/
-cmake-build-debug/
+
+# IntelliJ
+.idea/
+cmake-build-*/
