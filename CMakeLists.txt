@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
+message(STATUS "Running cmake version ${CMAKE_VERSION}")
+
+# cmake modules
+include(cmake/find_libsbml.cmake)
 
 # project information
 project(liblsoda C)
@@ -20,3 +24,4 @@ set(LIBLSODA_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src)
 
 add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(test-sbml)
