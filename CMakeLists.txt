@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # project information
-project(liblsoda C)
+project(liblsoda C CXX)
 
 # cmake modules
 include(CMakeCXXInformation)
