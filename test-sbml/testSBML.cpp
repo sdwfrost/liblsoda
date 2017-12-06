@@ -157,7 +157,18 @@ void printVariables(map<string, double> mapVariables) {
   cout << endl;
 }
 
+int updateMapVariables(double *y, void *data) {
+  data_t *data_p = (data_t*) data;
+  int idx = 0;
+  for (auto itr : data_p->mapVariables) {
+    data_p->mapVariables[itr.first] = y[idx];
+    idx++;
+  }
+  return 0;
+}
+
 int fex(double t, double *y, double *ydot, void *data) {
+  updateMapVariables(y, data);
   data_t *data_p = (data_t *) data;
   int idx = 0;
   for (auto itr : data_p->mapRates) {
@@ -229,8 +240,10 @@ int main(int argc, char const *argv[]) {
   lsoda_prepare(&ctx, &opt);
 
   double t = 0.0;
+  double dt = 40;
+  double sim_time = 4000;
   printResultHeader(t, y, &ctx);
-  for (double tout = 0.1; tout <= 1.0; tout += 0.1) {
+  for (double tout = dt; tout <= sim_time; tout += dt) {
     lsoda(&ctx, y, &t, tout);
     printResult(t, y, &ctx);
 
