@@ -27,3 +27,7 @@ set(LIBLSODA_SOURCES
 
 add_library(lsoda-static STATIC ${LIBLSODA_SOURCES})
 add_library(lsoda SHARED ${LIBLSODA_SOURCES})
+
+if(UNIX)
+  target_link_libraries(lsoda m)
+endif()
