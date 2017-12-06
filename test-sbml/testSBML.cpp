@@ -92,23 +92,23 @@ ASTNode *rewriteLocalParameters(const ASTNode *node, const ListOfParameters *loc
 }
 
 data_t loadModel(const char *filename) {
-  data_t mydata;
+  data_t targetModel;
   SBMLReader reader;
 
   auto document = reader.readSBML(filename);
-  mydata.model = document->getModel();
+  targetModel.model = document->getModel();
 
   // rewrite local parameters
   map<string, ASTNode *> mapKineticLaw;
-  for (auto i = 0; i < mydata.model->getNumReactions(); i++) {
-    auto reaction = mydata.model->getReaction(i);
+  for (auto i = 0; i < targetModel.model->getNumReactions(); i++) {
+    auto reaction = targetModel.model->getReaction(i);
     auto node = reaction->getKineticLaw()->getMath();
     mapKineticLaw[reaction->getId()] = rewriteLocalParameters(node, reaction->getKineticLaw()->getListOfParameters());
   }
 
   // Generate Rate equation and map for all variable Species (ex. dx/dt = v1 - v2 + v3).
-  for (auto i = 0; i < mydata.model->getNumSpecies(); i++) {
-    auto species = mydata.model->getSpecies(i);
+  for (auto i = 0; i < targetModel.model->getNumSpecies(); i++) {
+    auto species = targetModel.model->getSpecies(i);
 
     // if constant
     if (species->getBoundaryCondition() || species->getConstant()) {
@@ -117,15 +117,15 @@ data_t loadModel(const char *filename) {
 
     // InitialAmount or InitialConcentration
     if (species->isSetInitialAmount()) {
-      mydata.mapVariables[species->getId()] = species->getInitialAmount();
+      targetModel.mapVariables[species->getId()] = species->getInitialAmount();
     } else {
-      mydata.mapVariables[species->getId()] = species->getInitialConcentration();
+      targetModel.mapVariables[species->getId()] = species->getInitialConcentration();
     }
 
     // generate Rate equation
     ASTNode *root = nullptr;
-    for (auto j = 0; j < mydata.model->getNumReactions(); j++) {
-      auto reaction = mydata.model->getReaction(j);
+    for (auto j = 0; j < targetModel.model->getNumReactions(); j++) {
+      auto reaction = targetModel.model->getReaction(j);
       if (isSpeciesReactantOf(species, reaction)) {
         root = addASTasReactant(root, mapKineticLaw[reaction->getId()]);
       }
@@ -134,11 +134,11 @@ data_t loadModel(const char *filename) {
       }
     }
     if (root != nullptr) {
-      mydata.mapRates[species->getId()] = root;
+      targetModel.mapRates[species->getId()] = root;
     }
   }
   SBMLDocument_free(document);
-  return mydata;
+  return targetModel;
 }
 
 void printRHS(map<string, ASTNode *> mapRate) {
@@ -193,12 +193,12 @@ int main(int argc, char const *argv[]) {
     return 1;
   }
   const char *filename = argv[1];
-  auto mydata = loadModel(filename);
-  printVariables(mydata.mapVariables);
-  printRHS(mydata.mapRates);
+  auto targetModel = loadModel(filename);
+  printVariables(targetModel.mapVariables);
+  printRHS(targetModel.mapRates);
 
   // LSODA
-  int neq = mydata.mapRates.size();
+  int neq = targetModel.mapRates.size();
   double *rtol = new double[neq];
   double *atol = new double[neq];
   double *y = new double[neq];
@@ -208,7 +208,7 @@ int main(int argc, char const *argv[]) {
     atol[i] = 1e-6;
   }
   int idx = 0;
-  for (auto itr : mydata.mapVariables) {
+  for (auto itr : targetModel.mapVariables) {
     y[idx] = itr.second;
     idx++;
   }
@@ -222,7 +222,7 @@ int main(int argc, char const *argv[]) {
   struct lsoda_context_t ctx = {
       .function = fex,
       .neq = neq,
-      .data = &mydata,
+      .data = &targetModel,
       .state = 1,
   };
 
