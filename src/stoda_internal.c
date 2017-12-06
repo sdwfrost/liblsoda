@@ -6,10 +6,10 @@
 #include "blas.h"
 
 /*
-   This routine returns from stoda to lsoda.  Hence freevectors() is
+   This routine returns from stoda_internal to lsoda.  Hence freevectors() is
    not executed.
 */
-#define endstoda() \
+#define endstoda_internal() \
 { \
 	double          r; \
 	int             i; \
@@ -34,8 +34,7 @@
 	_C(rc) = _C(rc) * _C(el)[1] / el0; \
 }
 
-
-int stoda(struct lsoda_context_t * ctx, double *y, int jstart)
+int stoda_internal(struct lsoda_context_t *ctx, double *y, int jstart)
 {
 	int kflag;
 	int             i, i1, j, m;
@@ -48,12 +47,12 @@ int stoda(struct lsoda_context_t * ctx, double *y, int jstart)
 	const int neq = ctx->neq;
 
 /*
-   stoda performs one step of the integration of an initial value
+   stoda_internal performs one step of the integration of an initial value
    problem for a system of ordinary differential equations.
-   Note.. stoda is independent of the value of the iteration method
+   Note.. stoda_internal is independent of the value of the iteration method
    indicator _C(miter), when this is != 0, and hence is independent
    of the type of chord method used, or the Jacobian structure.
-   Communication with stoda is done with the following variables:
+   Communication with stoda_internal is done with the following variables:
 
    jstart = an integer used for input only, with the following
             values and meanings:
@@ -232,7 +231,7 @@ int stoda(struct lsoda_context_t * ctx, double *y, int jstart)
 					rh = fmax(rh, hmin / fabs(_C(h)));
 					scaleh(ctx, rh);
 					_C(rmax) = 10.;
-					endstoda();
+					endstoda_internal();
 					break;
 				}
 			}
@@ -254,7 +253,7 @@ int stoda(struct lsoda_context_t * ctx, double *y, int jstart)
    No change in _C(h) or _C(nq).
 */
 				if (orderflag == 0) {
-					endstoda();
+					endstoda_internal();
 					break;
 				}
 /*
@@ -264,7 +263,7 @@ int stoda(struct lsoda_context_t * ctx, double *y, int jstart)
 					rh = fmax(rh, hmin / fabs(_C(h)));
 					scaleh(ctx, rh);
 					_C(rmax) = 10.;
-					endstoda();
+					endstoda_internal();
 					break;
 				}
 /*
@@ -275,17 +274,17 @@ int stoda(struct lsoda_context_t * ctx, double *y, int jstart)
 					rh = fmax(rh, hmin / fabs(_C(h)));
 					scaleh(ctx, rh);
 					_C(rmax) = 10.;
-					endstoda();
+					endstoda_internal();
 					break;
 				}
 			}	/* end if ( _C(ialth) == 0 )   */
 			if (_C(ialth) > 1 || (_C(nq) + 1) == maxord + 1) {
-				endstoda();
+				endstoda_internal();
 				break;
 			}
 			for (i = 1; i <= neq; i++)
 				_C(yh)[maxord + 1][i] = _C(acor)[i];
-			endstoda();
+			endstoda_internal();
 			break;
 		}
 		/* end if ( dsm <= 1. )   */
@@ -365,4 +364,4 @@ int stoda(struct lsoda_context_t * ctx, double *y, int jstart)
 	}			/* end outer while   */
 
 	return kflag;
-}				/* end stoda   */
+}				/* end stoda_internal   */

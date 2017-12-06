@@ -20,7 +20,7 @@ orderswitch.c \
 prja.c \
 scaleh.c \
 solsy.c \
-stoda.c \
+stoda_internal.c \
 vmnorm.c \
 strdup_printf.c
 

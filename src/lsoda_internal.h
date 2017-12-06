@@ -1,4 +1,4 @@
-int stoda(struct lsoda_context_t * ctx, double *y, int jstart);
+int stoda_internal(struct lsoda_context_t *ctx, double *y, int jstart);
 int      correction(struct lsoda_context_t * ctx, double *y, double pnorm, double *del, double *delp, double told, int *m);
 int prja(struct lsoda_context_t * ctx, double *y);
 

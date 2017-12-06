@@ -545,7 +545,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 
 		 */
 		/*
-		   If ctx->state = 3, set flag to signal parameter changes to stoda.
+		   If ctx->state = 3, set flag to signal parameter changes to stoda_internal.
 		 */
 		if (ctx->state == 3) {
 			jstart = -1;
@@ -714,7 +714,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 		/*
 		   Block e.
 		   The next block is normally executed for all calls and contains
-		   the call to the one-step core integrator stoda.
+		   the call to the one-step core integrator stoda_internal.
 
 		   This is a looping point for the integration steps.
 
@@ -759,9 +759,9 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 				}
 			}
 			/*
-			   Call stoda
+			   Call stoda_internal
 			 */
-			kflag = stoda(ctx, y, jstart);
+			kflag = stoda_internal(ctx, y, jstart);
 			/*
 			   printf( "_C(meth)= %d,   order= %d,   _C(nfe)= %d,   _C(nje)= %d\n",
 			   _C(meth), _C(nq), _C(nfe), _C(nje) );
@@ -776,7 +776,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 				   The following block handles the case of a successful return from the
 				   core integrator ( kflag = 0 ).
 				   If a method switch was just made, record _C(tsw), reset maxord,
-				   set jstart to -1 to signal stoda to complete the switch,
+				   set jstart to -1 to signal stoda_internal to complete the switch,
 				   and do extra printing of data if ixpr = 1.
 				   Then, in any case, check for stop conditions.
 				 */
