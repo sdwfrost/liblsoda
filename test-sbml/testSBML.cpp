@@ -92,6 +92,7 @@ ASTNode *rewriteLocalParameters(const ASTNode *node, const ListOfParameters *loc
 }
 
 data_t loadModel(const char *filename) {
+<<<<<<< HEAD
   data_t targetModel;
   SBMLReader reader;
 
@@ -102,13 +103,30 @@ data_t loadModel(const char *filename) {
   map<string, ASTNode *> mapKineticLaw;
   for (auto i = 0; i < targetModel.model->getNumReactions(); i++) {
     auto reaction = targetModel.model->getReaction(i);
+=======
+  data_t mydata;
+  SBMLReader reader;
+
+  auto document = reader.readSBML(filename);
+  mydata.model = document->getModel();
+
+  // rewrite local parameters
+  map<string, ASTNode *> mapKineticLaw;
+  for (auto i = 0; i < mydata.model->getNumReactions(); i++) {
+    auto reaction = mydata.model->getReaction(i);
+>>>>>>> origin/feature_libsbml
     auto node = reaction->getKineticLaw()->getMath();
     mapKineticLaw[reaction->getId()] = rewriteLocalParameters(node, reaction->getKineticLaw()->getListOfParameters());
   }
 
   // Generate Rate equation and map for all variable Species (ex. dx/dt = v1 - v2 + v3).
+<<<<<<< HEAD
   for (auto i = 0; i < targetModel.model->getNumSpecies(); i++) {
     auto species = targetModel.model->getSpecies(i);
+=======
+  for (auto i = 0; i < mydata.model->getNumSpecies(); i++) {
+    auto species = mydata.model->getSpecies(i);
+>>>>>>> origin/feature_libsbml
 
     // if constant
     if (species->getBoundaryCondition() || species->getConstant()) {
@@ -117,15 +135,26 @@ data_t loadModel(const char *filename) {
 
     // InitialAmount or InitialConcentration
     if (species->isSetInitialAmount()) {
+<<<<<<< HEAD
       targetModel.mapVariables[species->getId()] = species->getInitialAmount();
     } else {
       targetModel.mapVariables[species->getId()] = species->getInitialConcentration();
+=======
+      mydata.mapVariables[species->getId()] = species->getInitialAmount();
+    } else {
+      mydata.mapVariables[species->getId()] = species->getInitialConcentration();
+>>>>>>> origin/feature_libsbml
     }
 
     // generate Rate equation
     ASTNode *root = nullptr;
+<<<<<<< HEAD
     for (auto j = 0; j < targetModel.model->getNumReactions(); j++) {
       auto reaction = targetModel.model->getReaction(j);
+=======
+    for (auto j = 0; j < mydata.model->getNumReactions(); j++) {
+      auto reaction = mydata.model->getReaction(j);
+>>>>>>> origin/feature_libsbml
       if (isSpeciesReactantOf(species, reaction)) {
         root = addASTasReactant(root, mapKineticLaw[reaction->getId()]);
       }
@@ -134,11 +163,19 @@ data_t loadModel(const char *filename) {
       }
     }
     if (root != nullptr) {
+<<<<<<< HEAD
       targetModel.mapRates[species->getId()] = root;
     }
   }
   SBMLDocument_free(document);
   return targetModel;
+=======
+      mydata.mapRates[species->getId()] = root;
+    }
+  }
+  SBMLDocument_free(document);
+  return mydata;
+>>>>>>> origin/feature_libsbml
 }
 
 void printRHS(map<string, ASTNode *> mapRate) {
@@ -193,12 +230,21 @@ int main(int argc, char const *argv[]) {
     return 1;
   }
   const char *filename = argv[1];
+<<<<<<< HEAD
   auto targetModel = loadModel(filename);
   printVariables(targetModel.mapVariables);
   printRHS(targetModel.mapRates);
 
   // LSODA
   int neq = targetModel.mapRates.size();
+=======
+  auto mydata = loadModel(filename);
+  printVariables(mydata.mapVariables);
+  printRHS(mydata.mapRates);
+
+  // LSODA
+  int neq = mydata.mapRates.size();
+>>>>>>> origin/feature_libsbml
   double *rtol = new double[neq];
   double *atol = new double[neq];
   double *y = new double[neq];
@@ -208,7 +254,11 @@ int main(int argc, char const *argv[]) {
     atol[i] = 1e-6;
   }
   int idx = 0;
+<<<<<<< HEAD
   for (auto itr : targetModel.mapVariables) {
+=======
+  for (auto itr : mydata.mapVariables) {
+>>>>>>> origin/feature_libsbml
     y[idx] = itr.second;
     idx++;
   }
@@ -222,7 +272,11 @@ int main(int argc, char const *argv[]) {
   struct lsoda_context_t ctx = {
       .function = fex,
       .neq = neq,
+<<<<<<< HEAD
       .data = &targetModel,
+=======
+      .data = &mydata,
+>>>>>>> origin/feature_libsbml
       .state = 1,
   };
 
