@@ -5,4 +5,8 @@ add_executable(testprog test.c)
 # headers
 include_directories(${LIBLSODA_INCLUDE_DIR})
 
-target_link_libraries(testprog lsoda)
+if(MSVC)
+  target_link_libraries(testprog lsoda)
+else(MSVC)
+  target_link_libraries(testprog lsoda m)
+endif()
