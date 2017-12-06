@@ -27,6 +27,8 @@ set(LIBLSODA_SOURCES
 
 add_library(lsoda-static STATIC ${LIBLSODA_SOURCES})
 add_library(lsoda SHARED ${LIBLSODA_SOURCES})
+add_library(lsoda-pic-object OBJECT ${LIBLSODA_SOURCES})
+set_property(TARGET lsoda-pic-object PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 if(UNIX)
   target_link_libraries(lsoda m)
