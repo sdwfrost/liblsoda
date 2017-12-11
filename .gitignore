@@ -31,3 +31,11 @@
 # Debug files
 *.dSYM/
 *.su
+
+# cmake
+build/
+build_debug/
+
+# IntelliJ
+.idea/
+cmake-build-*/
