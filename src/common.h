@@ -24,7 +24,7 @@ struct lsoda_common_t {
 	double   tsw, pdnorm;
 
 	/* no static variable for prja(), solsy() */
-	/* static variables for stoda_internal() */
+	/* static variables for stoda() */
 
 	double   crate, el[14];
 #ifdef CFODE_STATIC

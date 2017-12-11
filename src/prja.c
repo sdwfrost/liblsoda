@@ -11,7 +11,7 @@ int prja(struct lsoda_context_t * ctx, double *y)
 	double          fac, hl0, r, r0, yj;
 	const int neq = ctx->neq;
 /*
-   prja is called by stoda_internal to compute and process the matrix
+   prja is called by stoda to compute and process the matrix
    P = I - _C(h) * _C(el)[1] * J, where J is an approximation to the Jacobian.
    Here J is computed by finite differencin.
    J, scaled by -_C(h) * _C(el)[1], is stored in _C(wm).  Then the norm of J ( the
