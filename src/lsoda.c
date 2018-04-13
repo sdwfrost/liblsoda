@@ -24,7 +24,7 @@
     (iii) number of variables == number of equations is hard coded in the program
     (iv) lsoda also returns istate, and the error message is written to context->error
 
-  The original source code came with an MIT/X11 license. Hereby I release this
+    The original source code came with an MIT/X11 license. Hereby I release this
   code with MIT/X11 license too. Most of original notes are kept with the source
   code, when they are applicable.
 
@@ -116,7 +116,7 @@ tam@wri.com
  \
 	ERROR(fmt, ## __VA_ARGS__); \
 	for (i = 1; i <= neq; i++) \
-		y[i] = _C(yh)[1][i]; \
+	  y[i] = _C(yh)[1][i];	   \
 	*t = _C(tn); \
 	ctx->state = code; \
 	return ctx->state; \
@@ -501,13 +501,13 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
          * in C y[] starts from 0, but the converted fortran code starts from 1 */
 		y--;
 
-		int             i, ihit;
+		int             i=0, ihit;
 		const int neq = ctx->neq;
 		double          big, h0, hmx, rh, tcrit, tdist, tnext, tol,
 						tolsf, tp, size, sum, w0;
 
 		if(common == NULL) {
-			hardfailure("[lsoda] illegal common block did you call lsoda_prepare?\n");
+		  hardfailure("[lsoda] illegal common block did you call lsoda_prepare?%s\n","");
 		}
 		/*
 		   Block a.
@@ -566,7 +566,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 			if (itask == 4 || itask == 5) {
 				tcrit = opt->tcrit;
 				if ((tcrit - tout) * (tout - *t) < 0.) {
-					hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tout\n");
+					hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tout%s\n","");
 				}
 				if (h0 != 0. && (*t + h0 - tcrit) * h0 > 0.)
 					h0 = tcrit - *t;
@@ -621,7 +621,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 				tdist = fabs(tout - *t);
 				w0 = fmax(fabs(*t), fabs(tout));
 				if (tdist < 2. * ETA * w0) {
-					hardfailure("[lsoda] tout too close to t to start integration\n ");
+					hardfailure("[lsoda] tout too close to t to start integration%s\n","");
 				}
 				tol = 0.;;
 				for (i = 1; i <= neq; i++)
@@ -681,10 +681,10 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 				case 4:
 					tcrit = opt->tcrit;
 					if ((_C(tn) - tcrit) * _C(h) > 0.) {
-						hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tcur\n");
+						hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tcur%s\n","");
 					}
 					if ((tcrit - tout) * _C(h) < 0.) {
-						hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tout\n");
+						hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tout%s\n","");
 					}
 					if ((_C(tn) - tout) * _C(h) >= 0.) {
 						intdyreturn();
@@ -693,7 +693,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 					if (itask == 5) {
 						tcrit = opt->tcrit;
 						if ((_C(tn) - tcrit) * _C(h) > 0.) {
-							hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tcur\n");
+							hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tcur%s\n","");
 						}
 					}
 					hmx = fabs(_C(tn)) + fabs(_C(h));
