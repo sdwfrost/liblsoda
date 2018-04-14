@@ -11,12 +11,12 @@
   One can use it with threads and OpenMP as long as different instances
   of the solver uses different context.
     All global variables are either
-      (i) moved to a minimal local scope if possile.
+    (i) moved to a minimal local scope if possile.
       (ii) merged into a context variable that is passed around for all
            subroutine calls.
 
   Other differences:
-    (i) this code the input variables follow the C convention
+  (i) this code the input variables follow the C convention
         y, opt->atol, rtol, as well as parameters of context->function
         all indexes from 0.
     (ii) itol is eliminated. rtol and atol all has to be the same length of
@@ -24,7 +24,7 @@
     (iii) number of variables == number of equations is hard coded in the program
     (iv) lsoda also returns istate, and the error message is written to context->error
 
-  The original source code came with an MIT/X11 license. Hereby I release this
+    The original source code came with an MIT/X11 license. Hereby I release this
   code with MIT/X11 license too. Most of original notes are kept with the source
   code, when they are applicable.
 
@@ -77,7 +77,7 @@
  ***********/
 
 /*
-From tam@dragonfly.wri.com Wed Apr 24 01:35:52 1991
+  From tam@dragonfly.wri.com Wed Apr 24 01:35:52 1991
 Return-Path: <tam>
 Date: Wed, 24 Apr 91 03:35:24 CDT
 From: tam@dragonfly.wri.com
@@ -116,7 +116,7 @@ tam@wri.com
  \
 	ERROR(fmt, ## __VA_ARGS__); \
 	for (i = 1; i <= neq; i++) \
-		y[i] = _C(yh)[1][i]; \
+	  y[i] = _C(yh)[1][i];	   \
 	*t = _C(tn); \
 	ctx->state = code; \
 	return ctx->state; \
@@ -289,18 +289,18 @@ static int alloc_mem(struct lsoda_context_t * ctx) {
 
 	_C(memory) = malloc(offset);
 
-	_C(yh) = _C(memory) + yhoff;
-	_C(wm) =  _C(memory) + wmoff;
-	_C(ewt) = _C(memory) + ewtoff;
-	_C(savf) =_C(memory) + savfoff;
-	_C(acor) =_C(memory) + acoroff;
-	_C(ipvt) =_C(memory) + ipvtoff;
+	_C(yh) = (double **)((char *)_C(memory) + yhoff);
+	_C(wm) =  (double **)((char *)_C(memory) + wmoff);
+	_C(ewt) = (double *)((char *)_C(memory) + ewtoff);
+	_C(savf) =(double *)((char *)_C(memory) + savfoff);
+	_C(acor) =(double *)((char *)_C(memory) + acoroff);
+	_C(ipvt) =(int *)((char *)_C(memory) + ipvtoff);
 
 	for(i = 0; i <= lenyh; i++) {
-		_C(yh)[i] = _C(memory) + yh0off + i * (1 + nyh) * sizeof(double);
+		_C(yh)[i] = (double *)((char *)_C(memory) + yh0off + i * (1 + nyh) * sizeof(double));
 	}
 	for(i = 0; i <= nyh; i++) {
-		_C(wm)[i] = _C(memory) + wm0off + i * (1 + nyh) * sizeof(double);
+		_C(wm)[i] = (double *)((char *)_C(memory) + wm0off + i * (1 + nyh) * sizeof(double));
 	}
 
 	return _C(memory) != NULL;
@@ -501,13 +501,13 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
          * in C y[] starts from 0, but the converted fortran code starts from 1 */
 		y--;
 
-		int             i, ihit;
+		int             i=0, ihit;
 		const int neq = ctx->neq;
 		double          big, h0, hmx, rh, tcrit, tdist, tnext, tol,
 						tolsf, tp, size, sum, w0;
 
 		if(common == NULL) {
-			hardfailure("[lsoda] illegal common block did you call lsoda_prepare?\n");
+		  hardfailure("[lsoda] illegal common block did you call lsoda_prepare?%s\n","");
 		}
 		/*
 		   Block a.
@@ -566,7 +566,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 			if (itask == 4 || itask == 5) {
 				tcrit = opt->tcrit;
 				if ((tcrit - tout) * (tout - *t) < 0.) {
-					hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tout\n");
+					hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tout%s\n","");
 				}
 				if (h0 != 0. && (*t + h0 - tcrit) * h0 > 0.)
 					h0 = tcrit - *t;
@@ -621,7 +621,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 				tdist = fabs(tout - *t);
 				w0 = fmax(fabs(*t), fabs(tout));
 				if (tdist < 2. * ETA * w0) {
-					hardfailure("[lsoda] tout too close to t to start integration\n ");
+					hardfailure("[lsoda] tout too close to t to start integration%s\n","");
 				}
 				tol = 0.;;
 				for (i = 1; i <= neq; i++)
@@ -681,10 +681,10 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 				case 4:
 					tcrit = opt->tcrit;
 					if ((_C(tn) - tcrit) * _C(h) > 0.) {
-						hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tcur\n");
+						hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tcur%s\n","");
 					}
 					if ((tcrit - tout) * _C(h) < 0.) {
-						hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tout\n");
+						hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tout%s\n","");
 					}
 					if ((_C(tn) - tout) * _C(h) >= 0.) {
 						intdyreturn();
@@ -693,7 +693,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 					if (itask == 5) {
 						tcrit = opt->tcrit;
 						if ((_C(tn) - tcrit) * _C(h) > 0.) {
-							hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tcur\n");
+							hardfailure("[lsoda] itask = 4 or 5 and tcrit behind tcur%s\n","");
 						}
 					}
 					hmx = fabs(_C(tn)) + fabs(_C(h));
