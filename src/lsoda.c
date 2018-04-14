@@ -11,12 +11,12 @@
   One can use it with threads and OpenMP as long as different instances
   of the solver uses different context.
     All global variables are either
-      (i) moved to a minimal local scope if possile.
+    (i) moved to a minimal local scope if possile.
       (ii) merged into a context variable that is passed around for all
            subroutine calls.
 
   Other differences:
-    (i) this code the input variables follow the C convention
+  (i) this code the input variables follow the C convention
         y, opt->atol, rtol, as well as parameters of context->function
         all indexes from 0.
     (ii) itol is eliminated. rtol and atol all has to be the same length of
@@ -77,7 +77,7 @@
  ***********/
 
 /*
-From tam@dragonfly.wri.com Wed Apr 24 01:35:52 1991
+  From tam@dragonfly.wri.com Wed Apr 24 01:35:52 1991
 Return-Path: <tam>
 Date: Wed, 24 Apr 91 03:35:24 CDT
 From: tam@dragonfly.wri.com
@@ -289,18 +289,18 @@ static int alloc_mem(struct lsoda_context_t * ctx) {
 
 	_C(memory) = malloc(offset);
 
-	_C(yh) = _C(memory) + yhoff;
-	_C(wm) =  _C(memory) + wmoff;
-	_C(ewt) = _C(memory) + ewtoff;
-	_C(savf) =_C(memory) + savfoff;
-	_C(acor) =_C(memory) + acoroff;
-	_C(ipvt) =_C(memory) + ipvtoff;
+	_C(yh) = (double **)((char *)_C(memory) + yhoff);
+	_C(wm) =  (double **)((char *)_C(memory) + wmoff);
+	_C(ewt) = (double *)((char *)_C(memory) + ewtoff);
+	_C(savf) =(double *)((char *)_C(memory) + savfoff);
+	_C(acor) =(double *)((char *)_C(memory) + acoroff);
+	_C(ipvt) =(int *)((char *)_C(memory) + ipvtoff);
 
 	for(i = 0; i <= lenyh; i++) {
-		_C(yh)[i] = _C(memory) + yh0off + i * (1 + nyh) * sizeof(double);
+		_C(yh)[i] = (double *)((char *)_C(memory) + yh0off + i * (1 + nyh) * sizeof(double));
 	}
 	for(i = 0; i <= nyh; i++) {
-		_C(wm)[i] = _C(memory) + wm0off + i * (1 + nyh) * sizeof(double);
+		_C(wm)[i] = (double *)((char *)_C(memory) + wm0off + i * (1 + nyh) * sizeof(double));
 	}
 
 	return _C(memory) != NULL;
