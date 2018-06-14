@@ -121,7 +121,7 @@ tam@wri.com
 	int             i; \
 	int neq = ctx->neq; \
  \
-	ERROR(fmt, ## __VA_ARGS__); \
+	ERROR(fmt, __VA_ARGS__); \
 	for (i = 1; i <= neq; i++) \
 	  y[i] = _C(yh)[1][i];	   \
 	*t = _C(tn); \
