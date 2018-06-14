@@ -15,4 +15,5 @@ char * _strdup_printf(char * fmt, ...);
 #ifdef CFODE_STATIC
 	#define cfode cfode_static
 #endif
-#define ERROR(fmt, ...) (ctx->error? free(ctx->error):(void)1, ctx->error=_strdup_printf("EE:" fmt " @(%s:%d)", ## __VA_ARGS__, __FILE__, __LINE__))
+#define ERROR0(fmt, ...) (ctx->error? free(ctx->error):(void)1, ctx->error=_strdup_printf("EE:" fmt " @(%s:%d)", __FILE__, __LINE__))
+#define ERROR(fmt, ...) (ctx->error? free(ctx->error):(void)1, ctx->error=_strdup_printf("EE:" fmt " @(%s:%d)", __VA_ARGS__, __FILE__, __LINE__))
