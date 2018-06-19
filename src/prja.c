@@ -49,7 +49,7 @@ int prja(struct lsoda_context_t * ctx, double *y)
 /*
    Compute norm of Jacobian.
 */
-		_C(pdnorm) = fnorm(neq, _C(wm), _C(ewt)) / fabs(hl0);
+		_C(pdnorm) = fnorm0(neq, _C(wm), _C(ewt)) / fabs(hl0);
 /*
    Add identity matrix.
 */
@@ -58,7 +58,7 @@ int prja(struct lsoda_context_t * ctx, double *y)
 /*
    Do LU decomposition on P.
 */
-		dgefa(_C(wm), neq, _C(ipvt), &ier);
+		dgefa0(_C(wm), neq, _C(ipvt), &ier);
 		if (ier != 0)
 		return 0;
 	}
