@@ -118,7 +118,7 @@ tam@wri.com
 /* Terminate lsoda due to various error conditions. */
 #define softfailure(code, fmt,...) \
 { \
-	int             i; \
+	int i=0; \
 	int neq = ctx->neq; \
  \
 	ERROR(fmt, __VA_ARGS__); \
@@ -131,7 +131,7 @@ tam@wri.com
 
 #define softfailure0(code, fmt,...)              \
   {						 \
-    int             i;				 \
+    int i=0;				 \
     int neq = ctx->neq;				 \
 						 \
     ERROR0(fmt);				 \
@@ -151,7 +151,7 @@ tam@wri.com
 
 #define successreturn() \
 { \
-	int             i; \
+	int i=0; \
 	int neq = ctx->neq; \
  \
 	for (i = 1; i <= neq; i++) \
@@ -202,7 +202,7 @@ static int check_opt(struct lsoda_context_t * ctx, struct lsoda_opt_t * opt) {
 	 */
 	if (ctx->state == 1 || ctx->state == 3) {
 		/* c convention starts from 0. converted fortran code expects 1 */
-		int i;
+		int i=0;
 		for (i = 1; i <= ctx->neq; i++) {
 			double rtoli = rtol[i];
 			double atoli = atol[i];
@@ -274,7 +274,7 @@ static int alloc_mem(struct lsoda_context_t * ctx) {
 	int nyh = ctx->neq;
 	int lenyh = 1 + max(ctx->opt->mxordn, ctx->opt->mxords);
 	long offset = 0;
-	int i;
+	int i=0;
 	long yhoff = offset;
 	/* _C(yh) */
 	offset += (1 + lenyh) * sizeof(double *);
@@ -487,7 +487,7 @@ void lsoda_reset(struct lsoda_context_t * ctx) {
 void lsoda_free(struct lsoda_context_t * ctx) {
 	free(ctx->common->memory);
 	if(ctx->error) {
-		fprintf(stderr, "unhandled error message: %s\n", ctx->error);
+		REprintf("unhandled error message: %s\n", ctx->error);
 		free(ctx->error);
 	}
 	free(ctx->common);
@@ -495,7 +495,7 @@ void lsoda_free(struct lsoda_context_t * ctx) {
 
 #define ewset(ycur)  \
 { \
-	int             i; \
+	int i=0; \
  \
 	for (i = 1; i <= neq; i++) \
 		_C(ewt)[i] = rtol[i] * fabs((ycur)[i]) + atol[i]; \
@@ -521,7 +521,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
          * in C y[] starts from 0, but the converted fortran code starts from 1 */
 		y--;
 
-		int             i=0, ihit;
+		int             i=0, ihit=0;
 		const int neq = ctx->neq;
 		double          big, h0, hmx, rh, tcrit, tdist, tnext, tol,
 						tolsf, tp, size, sum, w0;
@@ -656,7 +656,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 				}
 				tol = fmax(tol, 100. * ETA);
 				tol = fmin(tol, 0.001);
-				sum = vmnorm(neq, _C(yh)[2], _C(ewt));
+				sum = vmnorm0(neq, _C(yh)[2], _C(ewt));
 				sum = 1. / (tol * w0 * w0) + tol * sum * sum;
 				h0 = 1. / sqrt(sum);
 				h0 = fmin(h0, tdist);
@@ -754,7 +754,7 @@ int lsoda(struct lsoda_context_t * ctx, double *y, double *t, double tout) {
 					}
 				}
 			}
-			tolsf = ETA * vmnorm(neq, _C(yh)[1], _C(ewt));
+			tolsf = ETA * vmnorm0(neq, _C(yh)[1], _C(ewt));
 			if (tolsf > 0.01) {
 				tolsf = tolsf * 200.;
 				if (_C(nst) == 0) {
